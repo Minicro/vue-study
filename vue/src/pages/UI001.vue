@@ -1,290 +1,200 @@
 <template>
-    <div>
-        <Table border ref="selection" :row-class-name="rowClassName" :columns="columns4" :data="data1" size="small"></Table>
-        <Button @click="handleSelectAll(true)">Set all selected</Button>
-        <Button @click="handleSelectAll(false)">Cancel all selected</Button>
-    </div>
+  <div id="main-container">
+    <el-row>
+      <el-col :span="24">
+        <div class="main-title">出   勤   表</div>
+      </el-col>
+    </el-row>
+    <el-row :gutter="9">
+      <el-col :span="1">
+        <label for="inputMonth">年月:</label>
+      </el-col>
+      <el-col :span="3">
+        <el-date-picker id="inputMonth" v-model="month" align="right" type="month" placeholder="日付選択" style="width: 130px"></el-date-picker>
+      </el-col>
+      <el-col :span="16">
+        <el-button type="primary" @click="addDetails"  v-bind:disabled="month === null ? true : false" icon="el-icon-check">一括生成</el-button>
+      </el-col>      
+      <el-col :span="1">
+        <label>氏名:</label>
+      </el-col>
+      <el-col :span="2">
+        <label>{{ userName }}</label>
+      </el-col>
+      <el-col :span="1">
+        <label style="margin-left: 30px">印</label>
+      </el-col>
+    </el-row>
+    <transition name="el-zoom-in-center" mode="out-in">
+    <el-table v-show="showResult" :data="ui001DetailList" :max-height=450 :height=450 :stripe="true" :row-class-name="tableRowClassName">
+      <el-table-column prop="date" label="月/日" width="110" align="left">
+      </el-table-column>
+      <el-table-column label="勤務区分" width="120" align="left">
+        <template slot-scope="scope">
+          <el-select v-if="scope.row.editable" v-model="scope.row.workClassification">
+            <el-option v-for="workClassification in workClassificationList" :key="workClassification.code" :label="workClassification.name" :value="workClassification.name"></el-option>
+          </el-select>
+          <span v-else>{{ scope.row.workClassification }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="作業時刻" header-align="center">
+        <el-table-column label="開始" width="120px" align="right">
+          <template slot-scope="scope">
+            <el-time-select v-if="scope.row.editable" v-model="scope.row.startTime" style="width: 95px" :picker-options="{
+                start: '00:00',
+                step: '00:30',
+                end: '23:59'}" :change="caculateHour(scope.row)">
+            </el-time-select>
+            <span v-else>{{ scope.row.startTime }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="終了" width="120px" align="right">
+          <template slot-scope="scope">
+            <el-time-select v-if="scope.row.editable" v-model="scope.row.endTime" style="width: 95px" :picker-options="{
+                start: '00:00',
+                step: '00:30',
+                end: '23:59'}">
+            </el-time-select>
+            <span v-else>{{ scope.row.endTime }}</span>
+          </template>
+        </el-table-column>
+      </el-table-column>
+      <el-table-column label="中断時間" width="80px" align="right">
+        <template slot-scope="scope">
+          <el-input v-if="scope.row.editable" v-model="scope.row.restHour" maxlength="2"></el-input>
+          <span v-else>{{ scope.row.restHour }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="出勤時間" width="80px" align="right">
+        <template slot-scope="scope">
+          <el-input v-if="scope.row.editable" v-model="scope.row.workHour" maxlength="2"></el-input>
+          <span v-else>{{ scope.row.workHour }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="プロジェクト（現場）名" width="320px" align="left">
+        <template slot-scope="scope">
+          <el-input v-if="scope.row.editable" v-model="scope.row.projectName" maxlength="20"></el-input>
+          <span v-else>{{ scope.row.projectName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="備考" align="left">
+        <template slot-scope="scope">
+          <el-input v-if="scope.row.editable" v-model="scope.row.remarks" maxlength="20"></el-input>
+          <span v-else>{{ scope.row.remarks }}</span>
+        </template>
+      </el-table-column>
+    </el-table>
+    </transition>
+  </div>
 </template>
 
 <script>
+import UI001Detail from '../model/UI001/UI001Detail'
+
 export default {
   data() {
     return {
-      columns4: [
+      workClassificationList: [
         {
-          type: "selection",
-          fixed: "left",
-          width: 60,
-          align: "center"
+          code: '01',
+          name: '普通'
         },
         {
-          title: "Name",
-          key: "name",
-          fixed: "left",
-          width: 200
+          code: '02',
+          name: '休日'
         },
         {
-          title: "Show",
-          key: "show",
-          width: 150,
-          sortable: true,
-          filters: [
-            {
-              label: "Greater than 4000",
-              value: 1
-            },
-            {
-              label: "Less than 4000",
-              value: 2
-            }
-          ],
-          filterMultiple: false,
-          filterMethod(value, row) {
-            if (value === 1) {
-              return row.show > 4000;
-            } else if (value === 2) {
-              return row.show < 4000;
-            }
-          }
+          code: '03',
+          name: '祝日'
         },
         {
-          title: "Weak",
-          key: "weak",
-          width: 150,
-          sortable: true
+          code: '04',
+          name: '振替休暇'
         },
         {
-          title: "Signin",
-          key: "signin",
-          width: 150,
-          sortable: true
-        },
-        {
-          title: "Click",
-          key: "click",
-          width: 150,
-          sortable: true
-        },
-        {
-          title: "Active",
-          key: "active",
-          width: 150,
-          sortable: true
-        },
-        {
-          title: "7, retained",
-          key: "day7",
-          width: 150,
-          sortable: true
-        },
-        {
-          title: "30, retained",
-          key: "day30",
-          width: 150,
-          sortable: true
-        },
-        {
-          title: "The next day left",
-          key: "tomorrow",
-          width: 150,
-          sortable: true
-        },
-        {
-          title: "Day Active",
-          key: "day",
-          width: 150,
-          sortable: true
-        },
-        {
-          title: "Week Active",
-          key: "week",
-          width: 150,
-          sortable: true
-        },
-        {
-          title: "Month Active",
-          key: "month",
-          width: 150,
-          sortable: true
+          code: '05',
+          name: '振替出勤'
         }
       ],
-      data1: [
-        {
-          name: "Name1",
-          fav: 0,
-          show: 7302,
-          weak: 5627,
-          signin: 1563,
-          click: 4254,
-          active: 1438,
-          day7: 274,
-          day30: 285,
-          tomorrow: 1727,
-          day: 558,
-          week: 4440,
-          month: 5610
-        },
-        {
-          name: "Name2",
-          fav: 0,
-          show: 4720,
-          weak: 4086,
-          signin: 3792,
-          click: 8690,
-          active: 8470,
-          day7: 8172,
-          day30: 5197,
-          tomorrow: 1684,
-          day: 2593,
-          week: 2507,
-          month: 1537
-        },
-        {
-          name: "Name3",
-          fav: 0,
-          show: 7181,
-          weak: 8007,
-          signin: 8477,
-          click: 1879,
-          active: 16,
-          day7: 2249,
-          day30: 3450,
-          tomorrow: 377,
-          day: 1561,
-          week: 3219,
-          month: 1588
-        },
-        {
-          name: "Name4",
-          fav: 0,
-          show: 9911,
-          weak: 8976,
-          signin: 8807,
-          click: 8050,
-          active: 7668,
-          day7: 1547,
-          day30: 2357,
-          tomorrow: 7278,
-          day: 5309,
-          week: 1655,
-          month: 9043
-        },
-        {
-          name: "Name5",
-          fav: 0,
-          show: 934,
-          weak: 1394,
-          signin: 6463,
-          click: 5278,
-          active: 9256,
-          day7: 209,
-          day30: 3563,
-          tomorrow: 8285,
-          day: 1230,
-          week: 4840,
-          month: 9908
-        },
-        {
-          name: "Name6",
-          fav: 0,
-          show: 6856,
-          weak: 1608,
-          signin: 457,
-          click: 4949,
-          active: 2909,
-          day7: 4525,
-          day30: 6171,
-          tomorrow: 1920,
-          day: 1966,
-          week: 904,
-          month: 6851
-        },
-        {
-          name: "Name7",
-          fav: 0,
-          show: 5107,
-          weak: 6407,
-          signin: 4166,
-          click: 7970,
-          active: 1002,
-          day7: 8701,
-          day30: 9040,
-          tomorrow: 7632,
-          day: 4061,
-          week: 4359,
-          month: 3676
-        },
-        {
-          name: "Name8",
-          fav: 0,
-          show: 862,
-          weak: 6520,
-          signin: 6696,
-          click: 3209,
-          active: 6801,
-          day7: 6364,
-          day30: 6850,
-          tomorrow: 9408,
-          day: 2481,
-          week: 1479,
-          month: 2346
-        },
-        {
-          name: "Name9",
-          fav: 0,
-          show: 567,
-          weak: 5859,
-          signin: 128,
-          click: 6593,
-          active: 1971,
-          day7: 7596,
-          day30: 3546,
-          tomorrow: 6641,
-          day: 1611,
-          week: 5534,
-          month: 3190
-        },
-        {
-          name: "Name10",
-          fav: 0,
-          show: 3651,
-          weak: 1819,
-          signin: 4595,
-          click: 7499,
-          active: 7405,
-          day7: 8710,
-          day30: 5518,
-          tomorrow: 428,
-          day: 9768,
-          week: 2864,
-          month: 5811
-        }
+      userName: 'テストユーザー',
+      month: null,
+      showResult: false,
+      ui001Detail: new UI001Detail(null),
+      ui001DetailList: [
       ]
     };
   },
   methods: {
-    handleSelectAll(status) {
-      this.$refs.selection.selectAll(status);
+    tableRowClassName({ row, rowIndex }) {
+      // if (rowIndex === 1) {
+      //   return "warning-row";
+      // } else if (rowIndex === 3) {
+      //   return "success-row";
+      // }
+      // return "";
     },
-    rowClassName(row, index) {
-      if (index === 1) {
-        return "demo-table-info-row";
-      } else if (index === 3) {
-        return "demo-table-error-row";
+    addDetails() {
+      var curDate = new Date();
+      var month = this.month.getMonth() + 1;
+      curDate.setMonth(month);
+      curDate.setDate(0);
+      var days = curDate.getDate();
+      this.showResult = false;
+      this.ui001DetailList = [];
+      for (var i = 1; i <= days; i ++) {
+        var ui001DetailLoop = new UI001Detail(null);
+        ui001DetailLoop.date = month + '/' + i;
+        this.ui001DetailList.push(ui001DetailLoop);
       }
-      return "";
+      // アニメのため、遅延設定する
+      setTimeout(() => {
+        this.showResult = true;
+      }, 100);
+    },
+    caculateHour(inputRow) {
+      if (!inputRow.startTime || !inputRow.endTime) {
+        return;
+      }
+      // if (inputRow.startTime == inputRow.endTime) {
+      //   inputRow.workHour = 0;
+      //   return;
+      // }
+      var tmpDateStart = inputRow.startTime.split(':').reverse().reduce((result, curr, index) => result + curr * Math.pow(60, index), 0);
+      var tmpDateEnd = inputRow.endTime.split(':').reverse().reduce((result, curr, index) => result + curr * Math.pow(60, index), 0);
+      // 徹夜の場合
+      if( tmpDateEnd < tmpDateStart ) {
+        tmpDateEnd = 24 * 60 + tmpDateEnd;
+      }
+      console.log(inputRow.restHour);
+      var result = ((tmpDateEnd - tmpDateStart) / 60) - (inputRow.restHour == null ? 0 : inputRow.restHour);
+      console.log(result);
+      if (result > 0) {
+        inputRow.workHour = result;
+      } else {
+        inputRow.workHour = null;
+      }
+
     }
   }
 };
 </script>
 
 <style>
-.ivu-table .demo-table-info-row td {
-  background-color: #2db7f5;
-  color: #fff;
+
+.el-table .warning-row {
+  background: oldlace;
 }
-.ivu-table .demo-table-error-row td {
-  background-color: #ff6600;
-  color: #fff;
+
+.el-table .success-row {
+  background: #f0f9eb;
+}
+
+.main-title {
+  text-align: center;
+  font-size: larger;
+}
+
+.el-col {
+  font-size: small;
 }
 </style>

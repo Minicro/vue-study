@@ -4,15 +4,16 @@ import Vue from 'vue';
 import App from './App';
 import router from './router';
 import Api from './api/api'
-import iView from 'iview';
-import 'iview/dist/styles/iview.css';
-
+import Element from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.config.productionTip = false;
 
 Vue.prototype.$http = Api;
 
-Vue.use(iView);
+
+// ここは、最後まで直すつもり
+Vue.use(Element, { size: 'small' });
 /* eslint-disable no-new */
 var app = new Vue({
   el: '#app',
