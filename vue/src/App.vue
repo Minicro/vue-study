@@ -8,15 +8,15 @@
           <el-menu default-active="1" menu-trigger="">
             <el-menu-item index="1">
               <i class="el-icon-document"></i>
-              <span slot="title">勤務表</span>
+              <router-link to="/UI001">勤務表</router-link>
             </el-menu-item>
             <el-menu-item index="2">
               <i class="el-icon-document"></i>
-              <span slot="title">导航2</span>
+              <router-link to="/UI001">交通費</router-link>
             </el-menu-item>
             <el-menu-item index="3">
               <i class="el-icon-document"></i>
-              <span slot="title">导航3</span>
+              <router-link to="/UI001">その他</router-link>
             </el-menu-item>
           </el-menu>
         </el-aside>
@@ -40,20 +40,20 @@ export default {
     text-align: center;
     line-height: 60px;
   }
-  
+
   .el-aside {
     background-color: #D3DCE6;
     color: #333;
     text-align: center;
     line-height: 200px;
   }
-  
+
   .el-main {
     background-color: #E9EEF3;
   }
-  
+
   body > .el-container {
     margin-bottom: 40px;
   }
-  
+
 </style>

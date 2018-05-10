@@ -1,0 +1,18 @@
+{
+  "name": "SeedOS",
+  "version": "0.0.1",
+  "description": "Base JavaScript UI Linux System",
+  "main": "index.js",
+  "author": "Minicro",
+  "license": "no license",
+  "private": true,
+  "devDependencies": {
+    "css-loader": "^0.28.11",
+    "ts-loader": "^4.3.0",
+    "typescript": "^2.8.3",
+    "vue": "^2.5.16",
+    "vue-loader": "^15.0.9",
+    "vue-template-compiler": "^2.5.16",
+    "webpack": "^4.8.1"
+  }
+}

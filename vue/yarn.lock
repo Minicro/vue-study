@@ -908,7 +908,7 @@ babel-plugin-transform-regenerator@^6.22.0:
   dependencies:
     regenerator-transform "^0.10.0"
 
-babel-plugin-transform-runtime@^6.15.0, babel-plugin-transform-runtime@^6.22.0:
+babel-plugin-transform-runtime@^6.15.0, babel-plugin-transform-runtime@^6.22.0, babel-plugin-transform-runtime@^6.23.0:
   version "6.23.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-runtime/-/babel-plugin-transform-runtime-6.23.0.tgz#88490d446502ea9b8e7efb0fe09ec4d99479b1ee"
   dependencies:
@@ -4034,6 +4034,10 @@ iview-loader@^1.1.0:
   resolved "https://registry.yarnpkg.com/iview-loader/-/iview-loader-1.1.0.tgz#53ee6e827193d8d9b20f761e6cbbea5d9f9a7802"
   dependencies:
     loader-utils "^1.1.0"
+
+japanese-holidays@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/japanese-holidays/-/japanese-holidays-1.0.6.tgz#27c1c25b0443a33eafc780a38a80d0ecf9ff45bc"
 
 js-base64@^2.1.9:
   version "2.4.3"
@@ -7737,6 +7741,12 @@ vue-meta@^1.4.3:
     deepmerge "^2.0.0"
     lodash.isplainobject "^4.0.6"
     object-assign "^4.1.1"
+
+vue-print-nb@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/vue-print-nb/-/vue-print-nb-1.0.3.tgz#9cf0f67a808a7635c6e79a0cf4c96d652bc32cc6"
+  dependencies:
+    babel-plugin-transform-runtime "^6.23.0"
 
 vue-router@^3.0.1:
   version "3.0.1"

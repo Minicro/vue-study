@@ -3,14 +3,14 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
-import Api from './api/api'
+import store from './store';
+import Api from './api'
 import Element from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.config.productionTip = false;
 
-Vue.prototype.$http = Api;
-
+Vue.prototype.$http = new Api();
 
 // ここは、最後まで直すつもり
 Vue.use(Element, { size: 'small' });
@@ -18,6 +18,7 @@ Vue.use(Element, { size: 'small' });
 var app = new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 });
