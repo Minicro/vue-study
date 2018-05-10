@@ -6,12 +6,19 @@
   "author": "Minicro",
   "license": "no license",
   "private": true,
+  "scripts": {
+    "build": "webpack"
+  },
+  "dependencies": {
+    "vue": "^2.5.16"
+  },
   "devDependencies": {
     "css-loader": "^0.28.11",
     "ts-loader": "^4.3.0",
     "typescript": "^2.8.3",
-    "vue": "^2.5.16",
+    "vue-class-component": "^6.2.0",
     "vue-loader": "^15.0.9",
+    "vue-property-decorator": "^6.0.0",
     "vue-template-compiler": "^2.5.16",
     "webpack": "^4.8.1"
   }
